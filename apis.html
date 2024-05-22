@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title></title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="" />
+  </head>
+  <body>
+    <h1>convertor</h1>
+    <select class="currencies" id="fromcurrency"></select
+    ><br /><br />
+    from currency<input type="number" id="from" /><br /><br />
+    <select class="currencies" id="tocurrency"></select
+    ><br /><br />
+    to currency<input type="number" id="to" />
+    <button id="submit">submit</button>
+    <!--[if lt IE 7]>
+      <p class="browsehappy">
+        You are using an <strong>outdated</strong> browser. Please
+        <a href="#">upgrade your browser</a> to improve your experience.
+      </p>
+    <![endif]-->
+
+    <script>
+      fetch("https://www.frankfurter.app/currencies")
+        .then((res) => res.json())
+        .then((data) => {
+          //console.log(data);
+          displayDropDown(data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+
+      let fromcurrency = document.getElementById("fromcurrency");
+      let tocurrency = document.getElementById("tocurrency");
+      let from = document.getElementById("from");
+      let to = document.getElementById("to");
+      let submit = document.getElementById("submit");
+
+      function displayDropDown(data) {
+        let currency = Object.entries(data); //converts json object to list
+        for (var i = 0; i < currency.length; i++) {
+          let syntax = `<option id="${currency[i][0]}">${currency[i][0]}</option>`;
+          fromcurrency.innerHTML += syntax;
+          tocurrency.innerHTML += syntax;
+          //console.log(syntax)
+        }
+      }
+
+      submit.addEventListener("click", () => {
+        var fromcurval = from.value;
+
+        var fromcur = fromcurrency.value;
+        var tocur = tocurrency.value;
+
+        if (fromcur == tocur) {
+          alert("error");
+        } else {
+          convert(fromcurval, fromcur, tocur);
+        }
+      });
+
+      function convert(fromcurval, fromcur, tocur) {
+        const host = "api.frankfurter.app";
+        fetch(
+          `https://${host}/latest?amount=${fromcurval}&from=${fromcur}&to=${tocur}`
+        )
+          .then((resp) => resp.json())
+          .then((data) => {
+            alert(
+              `the final converted value is ${Object.values(data.rates)[0]}`
+            );
+          });
+      }
+    </script>
+  </body>
+</html>
